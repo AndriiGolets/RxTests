@@ -24,7 +24,6 @@ public class Solution1 {
                                 //System.out.println(" Running new logic here");
                             }
                         }))).subscribe();
-
         Observable.interval(500, 500, TimeUnit.MILLISECONDS)
                 .flatMap(l -> Observable.just(sList.size() > 0 ? sList.get(0) : 0))
                 .filter(i -> i > 0)

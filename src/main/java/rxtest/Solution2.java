@@ -1,25 +1,21 @@
 package rxtest;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class TaskExample {
+public class Solution2 {
 
     public static void main(String[] args) throws InterruptedException {
         Observable.just(2, 3, 5)
-                .map(delay -> serviceReturningSingleWithDelay(delay))
-                .toList()
-                .flatMap(list ->
-                        // List<Single<Integer>> -> Single<List<Integer>>
-                        Single.zip(list,  output -> Arrays.stream(output)
-                                .map(d -> (Integer) d)
-                                .filter(delay -> delay == 3)
-                                .findFirst()
-                                .orElse(0)
-                        ))
+                .flatMap(delay -> serviceReturningSingleWithDelay(delay).toObservable())
+                .filter(d-> d == 3)
+                .firstOrError()
                 .subscribe(System.out::println);
 
         Thread.sleep(6000);
@@ -30,4 +26,5 @@ public class TaskExample {
                 .delay(delay, TimeUnit.SECONDS)
                 .doOnSuccess(s -> System.out.printf("Delay %d: Thread : %s \n", delay, Thread.currentThread().getName()));
     }
+
 }
